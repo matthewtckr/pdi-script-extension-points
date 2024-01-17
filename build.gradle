@@ -1,34 +1,17 @@
-apply plugin: 'java'
-apply plugin: 'eclipse'
-apply plugin: 'idea'
+plugins {
+    id 'java'
+    id 'eclipse'
+}
 
-// Keep Java source compatibility at 1.6 unless you absolutely need 7+ features, as this will 
-// ensure maximum supportability and compatibility for your plugin.
-sourceCompatibility = JavaVersion.VERSION_1_6
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+}
 
-version = '1.2'
+version = '2.0'
 
-// External property (deprecated in Gradle 2.x) for Kettle and metastore versions. If you wish to 
-// put your plugin in the Marketplace against the current revision (say, 5.0.x), use the latest
-// release tag
-ext.kettle_dependency_revision = '5.0.0.1'
-
-// This adds the Pentaho repositories and Maven Central. The official list of repos is currently
-// kept in GitHub at pentaho/subfloor/master-copies/ivysettings.xml, but if we move to Maven
-// you will want to see the common POM.
 repositories {
-  maven {
-    url 'https://nexus.pentaho.org/content/groups/omni/'
-  }
-  //ivy {
-  //  url "http://nexus.pentaho.org/content/groups/omni"
-  //  layout  "pattern", {
-  //    ivy "[organisation]/[module]/[revision]/[module]-[revision].ivy.xml"
-  //    artifact "[organisation]/[module]/[revision]/[module]-[revision].jar"
-  //    m2compatible = true
-  //  }
-  //}
   mavenCentral()
+  maven { url "https://repository.apache.org/content/repositories/releases/" }
   mavenLocal()
 }
 
@@ -45,8 +28,8 @@ configurations {
 dependencies {
   // Put compile-time dependencies here. This will include anything that Kettle provides that you
   // do not need to override, and usually includes kettle-core, kettle-engine, kettle-ui-swt, and metastore
-  provided("pentaho-kettle:kettle-core:${project.ext.kettle_dependency_revision}")
-  provided("pentaho-kettle:kettle-engine:${project.ext.kettle_dependency_revision}")
+  implementation("org.apache.hop:hop-core:2.7.0")
+  implementation("org.apache.hop:hop-engine:2.7.0")
 
   // Put runtime dependencies here using the runtime() directive. Example:
   
@@ -54,7 +37,7 @@ dependencies {
   // any overrides of JARs in the normal Kettle classloader. Example:
   compile fileTree(dir: 'lib-dist', include: '*.jar')
   
-  testCompile 'junit:junit:4.10'
+  testImplementation("junit:junit:4.13.2")
 }
 
 // This task builds a PDI plugin in the correct format, a ZIP with the plugin JAR at the root and a lib/ folder containing
@@ -82,5 +65,5 @@ artifacts {
 }
 
 task createGradleWrapper(type: Wrapper) {
-  gradleVersion = '2.1'
+  gradleVersion = '8.5'
 }
